@@ -1,23 +1,16 @@
 #!/bin/bash
 
-# Navigate to workspace
-cd /workspace
+echo "✅ Starting CloneTone XTTS backend..."
 
-# Clone only if it doesn't exist
-if [ ! -d "clonetone-xtts" ]; then
-  git clone https://github.com/vedantkamat1225/clonetone-xtts.git
-fi
+# Ensure we are in the repo directory
+cd /workspace/clonetone-xtts || exit 1
 
-# Enter the repo
-cd clonetone-xtts
-
-# Install dependencies
-pip install --upgrade pip
+# Install Python dependencies
 pip install -r requirements.txt
 
-# Confirm GPU access
-echo "🔥 Checking GPU access..."
-python3 -c "import torch; print('CUDA Available:', torch.cuda.is_available())"
+# Start FastAPI or Gradio app
+# If you're using FastAPI:
+uvicorn app.api:app --host 0.0.0.0 --port 7860
 
-# Launch FastAPI (replace with actual entry point if needed)
-python3 app/autostart.py
+# Or if you're using Gradio interface:
+# python3 app/autostart.py --share

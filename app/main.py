@@ -1,14 +1,14 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse
+from fastapi import FastAPI
+from pydantic import BaseModel
 from app.xtts_generate import generate_tts
 
 app = FastAPI()
 
-@app.post("/api/tts")
-async def generate_voice(data: Request):
-    body = await data.json()
-    text = body.get("text", "")
-    speaker = body.get("speaker", "default")  # speaker embedding name
+class TTSRequest(BaseModel):
+    text: str
+    speaker: str = "default"
 
-    output_file = generate_tts(text, speaker)
-    return FileResponse(output_file, media_type="audio/mpeg", filename="output.mp3")
+@app.post("/api/tts")
+def tts(req: TTSRequest):
+    output_file = generate_tts(req.text, req.speaker)
+    return {"status": "success", "file": output_file}
